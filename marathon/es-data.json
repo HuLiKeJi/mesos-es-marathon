@@ -1,0 +1,54 @@
+{
+    "id": "/es-data",
+    "cmd": null,
+    "cpus": 1,
+    "mem": 128,
+    "disk": 0,
+    "instances": 1,
+    "acceptedResourceRoles": [
+        "*"
+    ],
+    "container": {
+        "type": "DOCKER",
+        "volumes": [
+            {
+                "containerPath": "/es-data",
+                "hostPath": "es-data",
+                "mode": "RW"
+            },
+            {
+                "containerPath": "/es-config",
+                "hostPath": "es-data",
+                "mode": "RW"
+            },
+            {
+                "containerPath": "es-data",
+                "mode": "RW",
+                "persistent": {
+                    "size": 10
+                }
+            }
+        ],
+        "docker": {
+            "image": "es-data:latest",
+            "network": "HOST",
+            "privileged": false,
+            "parameters": [],
+            "forcePullImage": false
+        }
+    },
+    "env": {
+        "ZOOKEEPER": "localhost:2181"
+    },
+    "portDefinitions": [
+        {
+            "port": 10000,
+            "protocol": "tcp",
+            "labels": {}
+        }
+    ],
+    "upgradeStrategy": {
+        "minimumHealthCapacity": 0.5,
+        "maximumOverCapacity": 0
+    }
+}

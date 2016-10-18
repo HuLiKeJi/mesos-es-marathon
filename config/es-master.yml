@@ -1,0 +1,25 @@
+cluster.name: "elasticsearch"
+
+#auto gererate 
+node.name: 
+node.master:  "true"
+node.data:    "false"
+
+network.host: "0.0.0.0"
+#network.publish_host: "172.31.3.180"
+http.port:          9200-9250
+transport.tcp.port: 9300-9350
+#discovery.zen.ping.unicast.hosts: 
+
+path.data: "/es-data"
+path.logs: "/es-data/logs"
+
+#memory
+bootstrap.mlockall: true
+indices.fielddata.cache.size: 20%
+
+#index
+threadpool.bulk.queue_size: 3000
+indices.cluster.send_refresh_mapping: false
+
+action.disable_delete_all_indices: true

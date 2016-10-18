@@ -1,0 +1,12 @@
+* README
+
+** Environment Variables
+
+- ZOOKEEPER  required, marathon zookeeper address
+- ES_CONFIG_ elasticsearch.yml config
+
+
+** Volumes
+- /es-data   es data/logs path
+- /es-config es config path
+
