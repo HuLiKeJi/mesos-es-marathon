@@ -10,14 +10,14 @@ die() { echo $@; exit 1; }
 echo "[HOST]: $HOST"
 echo "[ZK]: $ZOOKEEPER"
 
-CFG_BASE_DIR="/es-config/config"
+ES_BACKUP_CONFIG="/es-config/elasticsearch.yml"
 DATA_BASE_DIR="/es-data"
 export ES_ZK_PATH_ROOT="/es-mesos"
 export ES_ZK_PATH_MARATHON="/marathon"
 
 BASE_DIR=`pwd`
 
-cfg_file="$CFG_BASE_DIR/elasticsearch.yml";
+cfg_file="config/elasticsearch.yml";
 zk_cmd="zookeepercli -servers $ZOOKEEPER " 
 
 replace_from_env() {
@@ -39,7 +39,7 @@ replace_from_env() {
 
 update_if_not_exist() {
     key=$1; delimiter=$2; value="$3"
-    echo $key, $delimiter, $value
+    echo $key $delimiter $value
     if [ "$value" == "" ]; then
         return 
     fi
@@ -53,23 +53,25 @@ update_if_not_exist() {
 }
 
 get_config() {
-    key=$1; delimiter=$2
-    grep "$key" $cfg_file|sed "s/^#\?$key\s*$delimiter\s*\(.*\)\s*/\1/"
+    key=$1; delimiter=$2; file=$3
+    if [ "$file" == "" ];then
+        file=$cfg_file;
+    fi
+    delimiter_trim=$(echo $delimiter|sed 's/\s//g')
+    awk -F $delimiter_trim "/^$key\s*$delimiter_trim\s*/{print \$2}" $file |sed 's/^\s*//'| sed 's/\s*$//'
 }
 
 zk_path_ids="$zk_path_root/ids"
 
-mkdir -p $CFG_BASE_DIR 2>/dev/null
-if [ ! -e $cfg_file ];then
-    touch $cfg_file || die "cannot modify $cfg_file"
+#read old node name
+if [ -e $ES_BACKUP_CONFIG ]; then
+    echo "backup file: $ES_BACKUP_CONFIG"
+    NODE_NAME=$(get_config "node.name" ":" $ES_BACKUP_CONFIG)
+else
+    echo "backup file  $ES_BACKUP_CONFIG not exists"
 fi
 
-cp config-bak/logging.yml $CFG_BASE_DIR
 
-#read old node name
-NODE_NAME=$(get_config "node.name" ":")
-#override config file
-cp -f config-bak/elasticsearch.yml $CFG_BASE_DIR
 
 #gererate node.name if not exist in config
 if [ "$NODE_NAME" == "" ];then
@@ -96,6 +98,10 @@ fi
 #write back to new config file
 update_if_not_exist "node.name" ": " "$NODE_NAME"
 
+if [[ ! -e $ES_BACKUP_CONFIG ]]; then
+    #backup config if create new node
+    cp -f config/elasticsearch.yml $ES_BACKUP_CONFIG
+fi
 
 echo "generate unicast host list ..."
 
@@ -113,6 +119,9 @@ update_if_not_exist "discovery.zen.ping.unicast.hosts" ": " $nodes
 echo "update config from env ..."
 replace_from_env "ES_CONFIG_" ": "
 
+#backup config file
+cp -f $ES_BACKUP_CONFIG "$ES_BACKUP_CONFIG.1"
+cp -f config/elasticsearch.yml $ES_BACKUP_CONFIG
 
 cat <<EOF
 ----------------------------------
@@ -120,6 +129,9 @@ cat <<EOF
 [ZK]  : $ZOOKEEPER
 [NODE]: $NODE_NAME
 [PORT]: $ES_TRANSPORT_PORT
+---------------------------------
+[$ES_BACKUP_CONFIG.1]
+`cat "$ES_BACKUP_CONFIG.1" | sed 's/^/    /g'`
 ----------------------------------
 [$cfg_file]:
 `cat $cfg_file | sed 's/^/    /g'`
@@ -135,7 +147,8 @@ stop_es() {
 }
 trap "stop_es" SIGINT SIGTERM SIGQUIT SIGABRT
 
-./bin/elasticsearch -Dpath.home=/es-config -Des.insecure.allow.root=true || die "start es failed" &
+#-Dpath.home=/es-config 
+./bin/elasticsearch -Des.insecure.allow.root=true || die "start es failed" &
 es_pid=$!
 
 wait $es_pid
