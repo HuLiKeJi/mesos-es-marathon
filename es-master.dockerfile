@@ -42,6 +42,5 @@ EXPOSE 9200 9300
 #config in /es-config, rename to avoid confusion
 RUN pwd
 WORKDIR $ES_HOME
-RUN mv config            config-bak
-RUN rm config-bak/elasticsearch.yml
-ADD $ES_CONFIG_FILE      config-bak/elasticsearch.yml
+RUN rm              config/elasticsearch.yml
+ADD $ES_CONFIG_FILE config/elasticsearch.yml
