@@ -20,9 +20,11 @@ BASE_DIR=`pwd`
 cfg_file="config/elasticsearch.yml";
 zk_cmd="zookeepercli -servers $ZOOKEEPER " 
 
-replace_from_env() {
+[ -f $cfg_file ] || die "$cfg_file `ls -lh $cfg_file` is not file"
 
-    prefix=$1; delimiter=$2
+replace_from_env() {
+    prefix=$1
+    delimiter=$2
     for VAR in `env`
     do
         if [[ $VAR =~ ^$prefix ]]; then
@@ -36,6 +38,29 @@ replace_from_env() {
         eval $CUSTOM_INIT_SCRIPT
     fi
 }
+
+#ES_RAW_CONFIG format:
+#"a:1 \n b:2 \n c:3"
+replace_from_raw() {
+    name=$1
+    delimiter=$2
+    delimiter_trim=$(echo $delimiter|sed 's/\s//g')
+
+    eval var=\$$name
+    if [ "$var" == "" ]; then
+        return
+    fi
+    #remove empty space
+    var=`echo $var | tr -d '[:space:]'`
+    #split with \n
+    cfgs=(`echo -e $var`)
+    for cfg in ${cfgs[@]}; do
+        key=`echo "$cfg" | sed -r "s/^\s*(.*)\s*$delimiter_trim\s*(.*)\s*$/\1/"`
+        val=`echo "$cfg" | sed -r "s/^\s*(.*)\s*$delimiter_trim\s*(.*)\s*$/\2/"`
+        update_if_not_exist "$key" "$delimiter" "$val"
+    done
+}
+
 
 update_if_not_exist() {
     key=$1; delimiter=$2; value="$3"
@@ -118,6 +143,7 @@ update_if_not_exist "discovery.zen.ping.unicast.hosts" ": " $nodes
 
 echo "update config from env ..."
 replace_from_env "ES_CONFIG_" ": "
+replace_from_raw "ES_RAW_CONFIG" ": "
 
 #backup config file
 cp -f $ES_BACKUP_CONFIG "$ES_BACKUP_CONFIG.1"

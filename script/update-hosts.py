@@ -102,8 +102,8 @@ def zk_get_node(node_name):
     host    = node_info.get("host", None)
     port    = node_info.get("port", None)
 
-    if not app_id or not task_id or not host:
-        trace("no app_id,task_id,host found in node `%s`"%node_name)
+    if not host:
+        trace("no host found in node `%s`"%node_name)
         return (-1,None)
     else:
         return (0, node_info)
