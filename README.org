@@ -1,6 +1,0 @@
-* Elasticsearch Marathon Docker
-
-** how to user
-
-: ./build.sh
-
