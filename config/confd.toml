@@ -1,0 +1,9 @@
+backend = "zookeeper"
+confdir = "/etc/confd"
+log-level = "debug"
+interval = 120
+nodes = [
+  "172.17.0.2:2181",
+]
+noop = false
+prefix = "/"

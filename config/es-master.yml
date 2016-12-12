@@ -1,25 +1,24 @@
-cluster.name: "elasticsearch"
+cluster.name: "xyz-es"
 
-#auto gererate 
-node.name: 
-node.master:  "true"
-node.data:    "false"
+node.name: "${HOST}-master"
+node.master:  true
+node.data:    false
+node.ingest:  false
 
 network.host: "0.0.0.0"
-#network.publish_host: "172.31.3.180"
-http.port:          9200-9250
-transport.tcp.port: 9300-9350
-#discovery.zen.ping.unicast.hosts: 
+http.port:          ${PORT_HTTP}
+transport.tcp.port: ${PORT_TRANSPORT}
 
 path.data: "/es-data"
 path.logs: "/es-data/logs"
 
+discovery.zen.hosts_provider: file
+
 #memory
-bootstrap.mlockall: true
+bootstrap.memory_lock: true
 indices.fielddata.cache.size: 20%
 
 #index
-threadpool.bulk.queue_size: 3000
-indices.cluster.send_refresh_mapping: false
+thread_pool.bulk.queue_size: 3000
 
-action.disable_delete_all_indices: true
+action.destructive_requires_name: true
