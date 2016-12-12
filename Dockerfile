@@ -42,12 +42,11 @@ ADD config/supervisord.conf /etc/supervisord
 # Setup confd
 RUN mkdir -p /etc/confd/conf.d && mkdir -p /etc/confd/templates
 WORKDIR /etc/confd
-ADD config/confd.toml .
 ADD config/es-config.toml ./conf.d
 
 # add es config template generation script
-ADD script/add-es-config-template.sh /usr/local/bin
-RUN chmod a+x /usr/local/bin/add-es-config-template.sh
+ADD script/add-confd-config.py /usr/local/bin
+RUN chmod a+x /usr/local/bin/add-confd-config.py
 
 VOLUME ["/es-data"]
 

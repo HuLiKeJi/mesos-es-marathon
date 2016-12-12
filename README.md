@@ -28,6 +28,8 @@ docker build .
 
 docker run -p 9200:9200 \
            -p 9300:9300 \
+           -e ZK=localhost:2181 \
+           -e ZK_CONFIG_PREFIX=xyz-config \
            -e NODE_TYPE=master \
            -e HOST=localhost \
            -e PORT_HTTP=9200 \

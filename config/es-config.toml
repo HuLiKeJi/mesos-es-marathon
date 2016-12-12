@@ -2,8 +2,8 @@
 src = "es.yml.tmpl"
 dest = "/opt/elasticsearch/config/elasticsearch.yml"
 keys = [
-    "/xyz-config/es-master",
-    "/xyz-config/es-data",
-    "/xyz-config/es-client",
-    "/xyz-config/es-ingest",
+    "/es-master",
+    "/es-data",
+    "/es-client",
+    "/es-ingest",
 ]
