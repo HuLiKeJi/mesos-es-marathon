@@ -44,7 +44,10 @@ RUN mkdir -p /etc/confd/conf.d && mkdir -p /etc/confd/templates
 WORKDIR /etc/confd
 ADD config/confd.toml .
 ADD config/es-config.toml ./conf.d
-ADD config/es.yml.tmpl ./templates
+
+# add es config template generation script
+ADD script/add-es-config-template.sh /usr/local/bin
+RUN chmod a+x /usr/local/bin/add-es-config-template.sh
 
 VOLUME ["/es-data"]
 
