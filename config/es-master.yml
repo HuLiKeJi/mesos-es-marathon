@@ -1,4 +1,4 @@
-cluster.name: "xyz-es"
+cluster.name: "${ES_CLUSTER_NAME}"
 
 node.name: "${HOST}-master"
 node.master:  true
@@ -15,7 +15,6 @@ path.logs: "/es-data/logs"
 discovery.zen.hosts_provider: file
 
 #memory
-bootstrap.memory_lock: true
 indices.fielddata.cache.size: 20%
 
 #index
