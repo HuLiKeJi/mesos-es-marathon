@@ -48,6 +48,10 @@ ADD config/es-config.toml ./conf.d
 ADD script/add-confd-config.py /usr/local/bin
 RUN chmod a+x /usr/local/bin/add-confd-config.py
 
+# add es zk discovery script
+ADD script/es-zk-disco-sync.py /usr/local/bin
+RUN chmod a+x /usr/local/bin/es-zk-disco-sync.py
+
 VOLUME ["/es-data"]
 
 RUN adduser -S elasticsearch root && \
