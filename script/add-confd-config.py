@@ -14,13 +14,14 @@ nodes = [
 %s
 ]
 noop = false
+sync-only = true
 prefix = "%s"
 '''
 
 es_yml_tmpl = '''{{ getv "/es-%s" }}'''
 
 zk_nodes = "\n".join(map(lambda x: '  "%s",' % (x), os.environ.get("ZK", "localhost:2181").split(",")))
-prefix = os.environ.get("ZK_CONFIG_PREFIX", "xyz-config")
+prefix = os.environ.get("ZK_CONFIG_PREFIX", "/xyz-config")
 node_type = os.environ.get("NODE_TYPE", "master")
 
 with open(confd_toml_location, "w") as f:

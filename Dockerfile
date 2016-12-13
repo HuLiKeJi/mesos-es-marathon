@@ -43,6 +43,8 @@ ADD config/supervisord.conf /etc/supervisord
 RUN mkdir -p /etc/confd/conf.d && mkdir -p /etc/confd/templates
 WORKDIR /etc/confd
 ADD config/es-config.toml ./conf.d
+ADD config/es-discovery.toml ./conf.d
+ADD config/unicast_hosts.txt.tmpl ./templates
 
 # add es config template generation script
 ADD script/add-confd-config.py /usr/local/bin

@@ -1,0 +1,6 @@
+[template]
+src = "unicast_hosts.txt.tmpl"
+dest = "/opt/elasticsearch/config/discovery-file/unicast_hosts.txt"
+keys = [
+    "/es-disco-nodes",
+]

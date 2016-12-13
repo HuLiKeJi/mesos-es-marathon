@@ -1,0 +1,3 @@
+{{range $hosts := lsdir "/es-disco-nodes"}}
+{{getv (printf "/es-disco-nodes/%s/ip_address" $hosts)}}:{{getv (printf "/es-disco-nodes/%s/transport_port" $hosts)}}
+{{end}}
