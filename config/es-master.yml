@@ -13,6 +13,7 @@ path.data: "/es-data"
 path.logs: "/es-data/logs"
 
 discovery.zen.hosts_provider: file
+discovery.zen.minimum_master_nodes: 1
 
 #memory
 indices.fielddata.cache.size: 20%
