@@ -35,10 +35,6 @@
       "network": "HOST",
       "privileged": false,
       "parameters": [
-        {
-          "key": "user",
-          "value": "elasticsearch:root"
-        }
       ],
       "forcePullImage": true
     }

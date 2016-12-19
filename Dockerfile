@@ -58,8 +58,7 @@ RUN chmod a+x /usr/local/bin/es-zk-disco-sync.py
 # create mesos sandbox path and set as volume
 ENV MESOS_SANDBOX=/mnt/mesos/sandbox
 RUN mkdir -p $MESOS_SANDBOX/config && \
-    mkdir -p /es-data && \
-    cp -R $ES_HOME/config $MESOS_SANDBOX
+    mkdir -p /es-data
 
 RUN adduser -D -u 1000 -h $MESOS_SANDBOX elasticsearch root && \
     chown -R elasticsearch:root $MESOS_SANDBOX && \
