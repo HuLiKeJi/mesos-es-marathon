@@ -21,7 +21,8 @@ RUN apk add -u python=$PYTHON_VERSION py-pip=$PY_PIP_VERSION
 RUN pip install supervisor==$SUPERVISOR_VERSION requests==$PY_REQUESTS_VERSION kazoo==$KAZOO_VERSION
 
 # Download confd
-RUN wget -q "https://github.com/kelseyhightower/confd/releases/download/v0.11.0/confd-0.11.0-linux-amd64" -O /usr/local/bin/confd && \
+# https://github.com/kelseyhightower/confd/releases/download/v0.11.0/confd-0.11.0-linux-amd64
+RUN wget -q "https://s3.cn-north-1.amazonaws.com.cn/mesos-centos-repo/confd-0.11.0-linux-amd64" -O /usr/local/bin/confd && \
     chmod a+x /usr/local/bin/confd
 
 # Download ES
@@ -54,11 +55,19 @@ RUN chmod a+x /usr/local/bin/add-confd-config.py
 ADD script/es-zk-disco-sync.py /usr/local/bin
 RUN chmod a+x /usr/local/bin/es-zk-disco-sync.py
 
-VOLUME ["/es-data"]
+# create mesos sandbox path and set as volume
+ENV MESOS_SANDBOX=/mnt/mesos/sandbox
+RUN mkdir -p $MESOS_SANDBOX/config && \
+    mkdir -p /es-data && \
+    cp -R $ES_HOME/config $MESOS_SANDBOX
 
-RUN adduser -S elasticsearch root && \
+RUN adduser -D -u 1000 -h $MESOS_SANDBOX elasticsearch root && \
+    chown -R elasticsearch:root $MESOS_SANDBOX && \
+    chown -R elasticsearch:root /es-data && \
     chown -R elasticsearch:root $ES_HOME && \
     chown -R elasticsearch:root /etc/confd && \
     chown -R elasticsearch:root /usr/local/bin/confd
+
+WORKDIR $MESOS_SANDBOX
 
 CMD ["supervisord", "-c", "/etc/supervisord/supervisord.conf"]

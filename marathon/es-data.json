@@ -1,56 +1,74 @@
 {
-    "id": "/es-data",
-    "cmd": null,
-    "cpus": 1,
-    "mem": 512,
-    "disk": 0,
-    "instances": 4,
-    "acceptedResourceRoles": [
-        "*"
-    ],
-    "constraints": [["hostname", "UNIQUE"]],
-    "container": {
-        "type": "DOCKER",
-        "volumes": [
-            {
-                "containerPath": "/es-data",
-                "hostPath": "es-data",
-                "mode": "RW"
-            },
-            {
-                "containerPath": "/es-config",
-                "hostPath": "es-data",
-                "mode": "RW"
-            },
-            {
-                "containerPath": "es-data",
-                "mode": "RW",
-                "persistent": {
-                    "size": 204800
-                }
-            }
-        ],
-        "docker": {
-            "image": "registry.cn-beijing.aliyuncs.com/hooli/mesos-elasticsearch:data",
-            "network": "HOST",
-            "privileged": false,
-            "parameters": [],
-            "forcePullImage": true
+  "id": "/es-data",
+  "cmd": null,
+  "cpus": 2,
+  "mem": 2048,
+  "disk": 0,
+  "instances": 4,
+  "acceptedResourceRoles": [
+    "*"
+  ],
+  "constraints": [
+    [
+      "hostname",
+      "UNIQUE"
+    ]
+  ],
+  "container": {
+    "type": "DOCKER",
+    "volumes": [
+      {
+        "containerPath": "/es-data",
+        "hostPath": "es-data",
+        "mode": "RW"
+      },
+      {
+        "containerPath": "es-data",
+        "mode": "RW",
+        "persistent": {
+          "size": 102400
         }
-    },
-    "env": {
-        "ZOOKEEPER": "mesos-0:2181,mesos-1:2181,mesos-2:2181"
-    },
-    "portDefinitions": [
+      }
+    ],
+    "docker": {
+      "image": "registry.cn-beijing.aliyuncs.com/hooli/mesos-elasticsearch:es5",
+      "network": "HOST",
+      "privileged": false,
+      "parameters": [
         {
-            "port": 10000,
-            "protocol": "tcp",
-            "labels": {}
+          "key": "user",
+          "value": "elasticsearch:root"
         }
-    ],
-    "uris": [ "file:///opt/docker/docker.tar.gz" ],
-    "upgradeStrategy": {
-        "minimumHealthCapacity": 0.5,
-        "maximumOverCapacity": 0
+      ],
+      "forcePullImage": true
     }
+  },
+  "env": {
+    "ZK": "mesos-0:2181,mesos-1:2181,mesos-2:2181",
+    "ZK_CONFIG_PREFIX": "/xyz-config",
+    "ES_CLUSTER_NAME": "xyz-es",
+    "NODE_TYPE": "data",
+    "ES_JAVA_OPTS": "-Xms1g -Xmx1g"
+  },
+  "portDefinitions": [
+    {
+      "port": 39200,
+      "protocol": "tcp",
+      "name": "http",
+      "labels": {}
+    },
+    {
+      "port": 39300,
+      "protocol": "tcp",
+      "name": "transport",
+      "labels": {}
+    }
+  ],
+  "uris": [
+    "file:///opt/docker/docker.tar.gz"
+  ],
+  "upgradeStrategy": {
+    "minimumHealthCapacity": 0.5,
+    "maximumOverCapacity": 0
+  }
 }

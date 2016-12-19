@@ -1,6 +1,6 @@
 [template]
 src = "es.yml.tmpl"
-dest = "/opt/elasticsearch/config/elasticsearch.yml"
+dest = "/mnt/mesos/sandbox/config/elasticsearch.yml"
 keys = [
     "/es-master",
     "/es-data",
